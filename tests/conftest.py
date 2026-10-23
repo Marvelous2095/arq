@@ -58,7 +58,7 @@ async def arq_redis(test_redis_host: str, test_redis_port: int):
 
     yield redis_
 
-    await redis_.close(close_connection_pool=True)
+    await redis_.aclose(close_connection_pool=True)
 
 
 @pytest.fixture
@@ -72,7 +72,7 @@ async def arq_redis_msgpack(test_redis_host: str, test_redis_port: int):
     )
     await redis_.flushall()
     yield redis_
-    await redis_.close(close_connection_pool=True)
+    await redis_.aclose(close_connection_pool=True)
 
 
 @pytest.fixture
@@ -87,7 +87,7 @@ async def arq_redis_retry(test_redis_host: str, test_redis_port: int):
     )
     await redis_.flushall()
     yield redis_
-    await redis_.close(close_connection_pool=True)
+    await redis_.aclose(close_connection_pool=True)
 
 
 @pytest.fixture
@@ -140,7 +140,7 @@ async def fix_create_pool(loop):
 
     yield create_pool_
 
-    await asyncio.gather(*[p.close(close_connection_pool=True) for p in pools])
+    await asyncio.gather(*[p.aclose(close_connection_pool=True) for p in pools])
 
 
 @pytest.fixture(name='cancel_remaining_task')

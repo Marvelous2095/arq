@@ -10,6 +10,7 @@ from unittest.mock import MagicMock, patch
 import msgpack
 import pytest
 import redis.exceptions
+from packaging.version import Version
 
 from arq.connections import ArqRedis, RedisSettings
 from arq.constants import abort_jobs_ss, default_queue_name, expires_extra_ms, health_check_key_suffix, job_key_prefix
@@ -1062,6 +1063,10 @@ async def test_worker_timezone_defaults_to_system_timezone(worker):
     assert worker.timezone == datetime.now().astimezone().tzinfo
 
 
+@pytest.mark.skipif(
+    Version(redis.__version__) >= Version('6.0.0'),
+    reason='spies on redis-py private API Redis._disconnect_raise, removed in redis-py 6.0 (arq runtime does not use it)',
+)
 @pytest.mark.parametrize(
     'exception_thrown',
     [
@@ -1100,6 +1105,10 @@ async def test_worker_retry(mocker, worker_retry, exception_thrown):
         p.stop()
 
 
+@pytest.mark.skipif(
+    Version(redis.__version__) >= Version('6.0.0'),
+    reason='spies on redis-py private API Redis._disconnect_raise, removed in redis-py 6.0 (arq runtime does not use it)',
+)
 @pytest.mark.parametrize(
     'exception_thrown',
     [
